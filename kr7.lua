@@ -2,7 +2,7 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local defendKey = "F" -- tecla para defesa, ajuste se necessário
-local defenseDistance = 20 -- distância para ativar a defesa
+local defenseDistance = 10 -- distância para ativar a defesa (10 studs)
 
 -- Variável para controlar o estado
 local autoDefendEnabled = false
@@ -65,7 +65,7 @@ toggleButton.Parent = mainFrame
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0.2, 0, 0.2, 0)
 closeButton.Position = UDim2.new(1, -30, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Font = Enum.Font.SourceSansBold
@@ -73,10 +73,10 @@ closeButton.TextSize = 18
 closeButton.Parent = mainFrame
 
 local reopenButton = Instance.new("TextButton")
-reopenButton.Size = UDim2.new(0.2, 0, 0.2, 0)
-reopenButton.Position = UDim2.new(0.5, -40, 0.5, -40)
-reopenButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-reopenButton.Text = "Reabrir"
+reopenButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+reopenButton.Position = UDim2.new(0.5, -20, 0.5, -20)
+reopenButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+reopenButton.Text = ""
 reopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 reopenButton.Font = Enum.Font.SourceSansBold
 reopenButton.TextSize = 18
