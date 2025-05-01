@@ -1,171 +1,203 @@
-local Kr7Hub = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local ToggleButton = Instance.new("TextButton")
-local AutoFarmButton = Instance.new("TextButton")
-local ESPButton = Instance.new("TextButton")
-local RedeemCodesButton = Instance.new("TextButton")
-local UICorner = Instance.new("UICorner")
+-- Kr7 Hub Blox Fruits Script
+local painel = Instance.new("ScreenGui")
+local panelFrame = Instance.new("Frame")
+local espToggle = Instance.new("TextButton")
+local autoFarmToggle = Instance.new("TextButton")
+local autoClickToggle = Instance.new("TextButton")
+local aceitarMissaoToggle = Instance.new("TextButton")
+local redeemerButton = Instance.new("TextButton")
+local aimbotToggle = Instance.new("TextButton")
 
-Kr7Hub.Name = "Kr7Hub"
-Kr7Hub.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- Configurações iniciais
+local painelAtivo = false
+local espAtivado = false
+local autoFarmAtivado = false
+local autoClickAtivado = false
+local aimbotAtivado = false
+local aceitandoMissao = false
 
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = Kr7Hub
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 250, 0, 300)
-MainFrame.Active = true
-MainFrame.Draggable = true
+-- Função para criar o painel
+function criarPainel()
+    painel.Name = "Kr7 Hub"
+    painel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    painel.ResetOnSpawn = false
 
-UICorner.Parent = MainFrame
+    panelFrame.Parent = painel
+    panelFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    panelFrame.BackgroundTransparency = 0.4
+    panelFrame.Size = UDim2.new(0, 250, 0, 300)
+    panelFrame.Position = UDim2.new(0, 10, 0, 10)
 
-ToggleButton.Name = "ToggleButton"
-ToggleButton.Parent = Kr7Hub
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ToggleButton.Position = UDim2.new(0, 0, 0.5, 0)
-ToggleButton.Size = UDim2.new(0, 40, 0, 40)
-ToggleButton.Text = "≡"
-
-local AutoFarm = false
-local ESPActive = false
-
-local function FastAttack()
-    local VirtualUser = game:GetService('VirtualUser')
-    spawn(function()
-        while AutoFarm do
-            pcall(function()
-                local player = game.Players.LocalPlayer
-                local char = player.Character
-                if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-                    local enemy = GetNearestEnemy()
-                    if enemy then
-                        char.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
-                        VirtualUser:Button1Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-                    end
-                end
-            end)
-            wait(0.1)
+    -- Botão de ativar/desativar painel
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Parent = panelFrame
+    toggleButton.Size = UDim2.new(0, 40, 0, 40)
+    toggleButton.Position = UDim2.new(1, -40, 0, 0)
+    toggleButton.Text = "🛠️"
+    toggleButton.TextSize = 20
+    toggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    toggleButton.BackgroundTransparency = 0.3
+    toggleButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+    toggleButton.MouseButton1Click:Connect(function()
+        if painelAtivo then
+            painelAtivo = false
+            painel.Enabled = false
+        else
+            painelAtivo = true
+            painel.Enabled = true
         end
+    end)
+    
+    -- Botão ESP
+    espToggle.Parent = panelFrame
+    espToggle.Size = UDim2.new(0, 230, 0, 40)
+    espToggle.Position = UDim2.new(0, 10, 0, 50)
+    espToggle.Text = "👀 Ativar ESP"
+    espToggle.TextSize = 20
+    espToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    espToggle.MouseButton1Click:Connect(function()
+        espAtivado = not espAtivado
+        if espAtivado then
+            espToggle.Text = "👀 Desativar ESP"
+            ativarESP()
+        else
+            espToggle.Text = "👀 Ativar ESP"
+            desativarESP()
+        end
+    end)
+
+    -- Botão Auto Farm
+    autoFarmToggle.Parent = panelFrame
+    autoFarmToggle.Size = UDim2.new(0, 230, 0, 40)
+    autoFarmToggle.Position = UDim2.new(0, 10, 0, 100)
+    autoFarmToggle.Text = "⚔️ Ativar Auto Farm"
+    autoFarmToggle.TextSize = 20
+    autoFarmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    autoFarmToggle.MouseButton1Click:Connect(function()
+        autoFarmAtivado = not autoFarmAtivado
+        if autoFarmAtivado then
+            autoFarmToggle.Text = "⚔️ Desativar Auto Farm"
+            iniciarAutoFarm()
+        else
+            autoFarmToggle.Text = "⚔️ Ativar Auto Farm"
+            pararAutoFarm()
+        end
+    end)
+
+    -- Botão Auto Click
+    autoClickToggle.Parent = panelFrame
+    autoClickToggle.Size = UDim2.new(0, 230, 0, 40)
+    autoClickToggle.Position = UDim2.new(0, 10, 0, 150)
+    autoClickToggle.Text = "🖱️ Ativar Auto Click"
+    autoClickToggle.TextSize = 20
+    autoClickToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    autoClickToggle.MouseButton1Click:Connect(function()
+        autoClickAtivado = not autoClickAtivado
+        if autoClickAtivado then
+            autoClickToggle.Text = "🖱️ Desativar Auto Click"
+            ativarAutoClick()
+        else
+            autoClickToggle.Text = "🖱️ Ativar Auto Click"
+            desativarAutoClick()
+        end
+    end)
+
+    -- Botão Aceitar Missão
+    aceitarMissaoToggle.Parent = panelFrame
+    aceitarMissaoToggle.Size = UDim2.new(0, 230, 0, 40)
+    aceitarMissaoToggle.Position = UDim2.new(0, 10, 0, 200)
+    aceitarMissaoToggle.Text = "🎯 Ativar Aceitar Missão"
+    aceitarMissaoToggle.TextSize = 20
+    aceitarMissaoToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    aceitarMissaoToggle.MouseButton1Click:Connect(function()
+        aceitandoMissao = not aceitandoMissao
+        if aceitandoMissao then
+            aceitarMissaoToggle.Text = "🎯 Desativar Aceitar Missão"
+            ativarAceitarMissao()
+        else
+            aceitarMissaoToggle.Text = "🎯 Ativar Aceitar Missão"
+            desativarAceitarMissao()
+        end
+    end)
+
+    -- Botão Resgatar Todos os Códigos
+    redeemerButton.Parent = panelFrame
+    redeemerButton.Size = UDim2.new(0, 230, 0, 40)
+    redeemerButton.Position = UDim2.new(0, 10, 0, 250)
+    redeemerButton.Text = "🎟️ Resgatar Todos os Códigos"
+    redeemerButton.TextSize = 20
+    redeemerButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    redeemerButton.MouseButton1Click:Connect(function()
+        resgatarTodosOsCodigos()
     end)
 end
 
-function GetNearestEnemy()
-    local nearest
-    local dist = math.huge
-    for _, v in pairs(game.Workspace.Enemies:GetChildren()) do
-        if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") then
-            local magnitude = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).magnitude
-            if magnitude < dist then
-                dist = magnitude
-                nearest = v
+-- Função para ativar/desativar ESP
+function ativarESP()
+    -- ESP para mostrar os nomes, time, distância e localização
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local espPart = Instance.new("BillboardGui")
+            espPart.Adornee = player.Character.HumanoidRootPart
+            espPart.Size = UDim2.new(0, 200, 0, 50)
+            espPart.StudsOffset = Vector3.new(0, 3, 0)
+            espPart.Name = "ESP"
+            espPart.Parent = player.Character.HumanoidRootPart
+
+            local texto = Instance.new("TextLabel")
+            texto.Text = player.Name .. "\n" .. "Time: " .. (player.Team == game.Teams.Pirates and "Pirata" or "Marinha")
+            texto.Size = UDim2.new(1, 0, 1, 0)
+            texto.BackgroundTransparency = 1
+            texto.TextColor3 = (player.Team == game.Teams.Pirates) and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 255)
+            texto.TextScaled = true
+            texto.Parent = espPart
+        end
+    end
+end
+
+-- Função para desativar ESP
+function desativarESP()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local espPart = player.Character.HumanoidRootPart:FindFirstChild("ESP")
+            if espPart then
+                espPart:Destroy()
             end
         end
     end
-    return nearest
 end
 
-function StartAutoFarm()
-    spawn(function()
-        while AutoFarm do
-            pcall(function()
-                local player = game.Players.LocalPlayer
-                local level = player.Data.Level.Value
-                -- Aqui você define suas missões/ilhas baseadas no level
-                local quest = GetQuestForLevel(level)
-                if quest then
-                    -- Teleportar até a ilha da missão
-                    player.Character.HumanoidRootPart.CFrame = quest.Position
-                    wait(1)
-                    -- Pegar missão
-                    fireclickdetector(quest.NPC.ClickDetector)
-                end
-            end)
-            wait(5)
-        end
-    end)
+-- Funções para Auto Farm
+function iniciarAutoFarm()
+    -- Adicione aqui o código para o Auto Farm
 end
 
-function GetQuestForLevel(level)
-    -- Você pode estender com as ilhas/missões reais aqui:
-    local quests = {
-        {Level = 1, Position = CFrame.new(0, 10, 0), NPC = workspace:FindFirstChild("BanditQuestGiver")},
-        {Level = 700, Position = CFrame.new(1000, 10, 1000), NPC = workspace:FindFirstChild("NewWorldQuestGiver")},
-        -- Adicione outras missões conforme sua lógica!
-    }
-    local selected
-    for _, q in pairs(quests) do
-        if level >= q.Level then
-            selected = q
-        end
-    end
-    return selected
+function pararAutoFarm()
+    -- Adicione aqui o código para parar o Auto Farm
 end
 
-function EnableESP()
-    for _, v in pairs(game.Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer then
-            local color = v.Team.Name == "Pirates" and BrickColor.new("Bright red") or BrickColor.new("Bright blue")
-            local highlight = Instance.new("Highlight", v.Character)
-            highlight.Name = "Kr7ESP"
-            highlight.FillColor = color.Color
-            highlight.OutlineColor = Color3.new(1,1,1)
-        end
-    end
+-- Funções para Auto Click
+function ativarAutoClick()
+    -- Código de Auto Click
 end
 
-function DisableESP()
-    for _, v in pairs(game.Players:GetPlayers()) do
-        if v.Character and v.Character:FindFirstChild("Kr7ESP") then
-            v.Character:FindFirstChild("Kr7ESP"):Destroy()
-        end
-    end
+function desativarAutoClick()
+    -- Código de desativar Auto Click
 end
 
-AutoFarmButton.Name = "AutoFarmButton"
-AutoFarmButton.Parent = MainFrame
-AutoFarmButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-AutoFarmButton.Position = UDim2.new(0.1, 0, 0.2, 0)
-AutoFarmButton.Size = UDim2.new(0, 200, 0, 40)
-AutoFarmButton.Text = "Toggle Auto Farm"
+-- Funções para Aceitar Missão
+function ativarAceitarMissao()
+    -- Código para aceitar missões automaticamente
+end
 
-ESPButton.Name = "ESPButton"
-ESPButton.Parent = MainFrame
-ESPButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ESPButton.Position = UDim2.new(0.1, 0, 0.4, 0)
-ESPButton.Size = UDim2.new(0, 200, 0, 40)
-ESPButton.Text = "Toggle ESP"
+function desativarAceitarMissao()
+    -- Código para desativar a aceitação automática de missões
+end
 
-RedeemCodesButton.Name = "RedeemCodesButton"
-RedeemCodesButton.Parent = MainFrame
-RedeemCodesButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-RedeemCodesButton.Position = UDim2.new(0.1, 0, 0.6, 0)
-RedeemCodesButton.Size = UDim2.new(0, 200, 0, 40)
-RedeemCodesButton.Text = "Redeem All Codes"
+-- Função para Resgatar Todos os Códigos
+function resgatarTodosOsCodigos()
+    -- Código para resgatar todos os códigos
+end
 
-ToggleButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-end)
-
-AutoFarmButton.MouseButton1Click:Connect(function()
-    AutoFarm = not AutoFarm
-    if AutoFarm then
-        StartAutoFarm()
-        FastAttack()
-    end
-end)
-
-ESPButton.MouseButton1Click:Connect(function()
-    ESPActive = not ESPActive
-    if ESPActive then
-        EnableESP()
-    else
-        DisableESP()
-    end
-end)
-
-RedeemCodesButton.MouseButton1Click:Connect(function()
-    local codes = {"EXPBoost", "1BVisits", "SubToCaptainMaui"} -- coloque os códigos reais aqui
-    for _, code in pairs(codes) do
-        game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(code)
-    end
-end)
+-- Chama a função de criar o painel
+criarPainel()
