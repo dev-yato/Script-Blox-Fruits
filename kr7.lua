@@ -1,170 +1,148 @@
--- Kr7 Hub - Auto Farm + Code Redeem + UI Toggle Script
-
-local Kr7Hub = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local ToggleButton = Instance.new("TextButton")
-local RedeemButton = Instance.new("TextButton")
-local Title = Instance.new("TextLabel")
+local ScreenGui = Instance.new("ScreenGui")
 local IconButton = Instance.new("ImageButton")
-local farming = false
+local MainFrame = Instance.new("Frame")
+local ActivateButton = Instance.new("TextButton")
+local RedeemCodesButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
+local UIS = game:GetService("UserInputService")
 
--- GUI setup
-Kr7Hub.Name = "Kr7Hub"
-Kr7Hub.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-Kr7Hub.ResetOnSpawn = false
+ScreenGui.Name = "Kr7Hub"
+ScreenGui.Parent = game.CoreGui
 
+-- Icon Button
+IconButton.Name = "IconButton"
+IconButton.Parent = ScreenGui
+IconButton.BackgroundTransparency = 1
+IconButton.Position = UDim2.new(0, 20, 0, 20)
+IconButton.Size = UDim2.new(0, 50, 0, 50)
+IconButton.Image = "rbxassetid://89766253362395"
+
+-- Main Panel
 MainFrame.Name = "MainFrame"
-MainFrame.Parent = Kr7Hub
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 240, 0, 160)
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Visible = false
 MainFrame.Active = true
 MainFrame.Draggable = true
-MainFrame.Visible = false  -- starts hidden
 
-Title.Name = "Title"
-Title.Parent = MainFrame
-Title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Text = "Kr7 Hub"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
+-- Activate Button
+ActivateButton.Name = "ActivateButton"
+ActivateButton.Parent = MainFrame
+ActivateButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+ActivateButton.Position = UDim2.new(0.1, 0, 0.2, 0)
+ActivateButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+ActivateButton.Text = "Ativar Auto Farm"
 
-ToggleButton.Name = "ToggleButton"
-ToggleButton.Parent = MainFrame
-ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-ToggleButton.Position = UDim2.new(0.1, 0, 0.4, 0)
-ToggleButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-ToggleButton.Text = "Start Auto Farm"
-ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.Font = Enum.Font.SourceSans
-ToggleButton.TextSize = 16
+-- Redeem Codes Button
+RedeemCodesButton.Name = "RedeemCodesButton"
+RedeemCodesButton.Parent = MainFrame
+RedeemCodesButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+RedeemCodesButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+RedeemCodesButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+RedeemCodesButton.Text = "Resgatar Todos os Códigos"
 
-RedeemButton.Name = "RedeemButton"
-RedeemButton.Parent = MainFrame
-RedeemButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-RedeemButton.Position = UDim2.new(0.1, 0, 0.7, 0)
-RedeemButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-RedeemButton.Text = "Redeem All Codes"
-RedeemButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-RedeemButton.Font = Enum.Font.SourceSans
-RedeemButton.TextSize = 16
+-- Close Button
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = MainFrame
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+CloseButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+CloseButton.Text = "Fechar Painel"
 
-IconButton.Name = "IconButton"
-IconButton.Parent = Kr7Hub
-IconButton.BackgroundTransparency = 1
-IconButton.Position = UDim2.new(0, 10, 0, 10)
-IconButton.Size = UDim2.new(0, 50, 0, 50)
-IconButton.Image = "https://cdn.discordapp.com/icons/1363950243905011812/b754d8296b87d6329d3c1a4a0336e91d.png?size=2048"
+-- Script Functions
+local isFarming = false
 
--- Toggle panel visibility
+ActivateButton.MouseButton1Click:Connect(function()
+    isFarming = not isFarming
+    if isFarming then
+        ActivateButton.Text = "Auto Farm Ativado"
+        spawn(function()
+            while isFarming do
+                pcall(function()
+                    local player = game.Players.LocalPlayer
+                    local level = player.Data.Level.Value
+                    -- Aqui você deve inserir a lógica de pegar missão + teleportar para a ilha certa + atacar NPC
+                    local quest = getQuestForLevel(level)
+                    if quest then
+                        getQuest(quest)
+                        farmNPC(quest)
+                    end
+                end)
+                wait(0.1)
+            end
+        end)
+    else
+        ActivateButton.Text = "Ativar Auto Farm"
+    end
+end)
+
+RedeemCodesButton.MouseButton1Click:Connect(function()
+    local codes = {
+        "Sub2NoobMaster123", "Axiore", "TantaiGaming", "StrawHatMaine",
+        "Sub2Daigrock", "Bignews", "TheGreatAce", "Fudd10", "Fudd10_V2"
+        -- você pode adicionar todos os códigos que quiser aqui
+    }
+    for _, code in pairs(codes) do
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(code)
+        end)
+    end
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
 IconButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Start/Stop farming
-ToggleButton.MouseButton1Click:Connect(function()
-    farming = not farming
-    if farming then
-        ToggleButton.Text = "Stop Auto Farm"
-        startAutoFarm()
+-- Funções fake (exemplo, precisa adaptar pro Blox Fruits real)
+function getQuestForLevel(level)
+    -- Aqui você faz o mapeamento do level para a missão certa
+    -- Exemplo:
+    if level < 10 then
+        return {QuestName = "BanditQuest1", NPC = "Bandit"}
+    elseif level < 30 then
+        return {QuestName = "MonkeyQuest", NPC = "Monkey"}
+    -- Continue para todos os níveis até 2650
     else
-        ToggleButton.Text = "Start Auto Farm"
+        return nil
     end
-end)
+end
 
--- Redeem all codes
-RedeemButton.MouseButton1Click:Connect(function()
-    local codes = {"Sub2Fer999", "Enyu_is_Pro", "Magicbus", "JCWK", "Starcodeheo", "Bluxxy", "fudd10", "BIGNEWS"}
-    for _, code in pairs(codes) do
-        game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(code)
-    end
-end)
+function getQuest(quest)
+    -- Função para pegar missão
+    local args = {
+        [1] = quest.QuestName,
+    }
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", unpack(args))
+end
 
--- Auto Farm logic
-function startAutoFarm()
-    spawn(function()
-        while farming do
-            pcall(function()
-                local player = game.Players.LocalPlayer
-                local level = player.Data.Level.Value
-                local questInfo = getQuestByLevel(level)
-                if questInfo then
-                    -- Move to island
-                    if (player.Character.HumanoidRootPart.Position - questInfo.Position).Magnitude > 100 then
-                        toTarget(questInfo.Position)
-                    end
-                    -- Get quest
-                    getQuest(questInfo)
-                    -- Attack
-                    attackNPCs(questInfo)
-                end
-            end)
-            wait(1)
+function farmNPC(quest)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local tool = character:FindFirstChildOfClass("Tool")
+    if not tool then
+        -- Equipar melee
+        tool = player.Backpack:FindFirstChildOfClass("Tool")
+        if tool then
+            player.Character.Humanoid:EquipTool(tool)
         end
-    end)
-end
-
-function getQuestByLevel(level)
-    -- Example for low level, expand this
-    if level >= 1 and level < 10 then
-        return {
-            Position = Vector3.new(1060, 16, 1427),
-            QuestName = "BanditQuest1",
-            NpcName = "Bandit"
-        }
     end
-    -- Add more levels/islands here
-    return nil
-end
 
-function toTarget(pos)
-    local player = game.Players.LocalPlayer
-    local char = player.Character
-    if char and char:FindFirstChild("HumanoidRootPart") then
-        char.HumanoidRootPart.Anchored = false
-        local tween_s = game:GetService("TweenService")
-        local info = TweenInfo.new(
-            (char.HumanoidRootPart.Position - pos).Magnitude / 300,
-            Enum.EasingStyle.Linear
-        )
-        local tween = tween_s:Create(char.HumanoidRootPart, info, {CFrame = CFrame.new(pos)})
-        tween:Play()
-    end
-end
-
-function getQuest(questInfo)
-    local player = game.Players.LocalPlayer
-    local npc = workspace:FindFirstChild(questInfo.QuestName)
-    if npc then
-        repeat
-            wait(0.5)
-            player.Character.HumanoidRootPart.CFrame = npc.Head.CFrame + Vector3.new(0, 0, 2)
-            fireproximityprompt(npc.Head.ProximityPrompt)
-        until player.PlayerGui:FindFirstChild("QuestGUI") or not farming
-    end
-end
-
-function attackNPCs(questInfo)
-    local player = game.Players.LocalPlayer
-    local npcs = workspace.Enemies:GetChildren()
-    for _, npc in pairs(npcs) do
-        if npc.Name == questInfo.NpcName and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+    -- Procurar e atacar NPCs
+    for _, npc in pairs(game.Workspace.Enemies:GetChildren()) do
+        if npc.Name == quest.NPC and npc:FindFirstChild("HumanoidRootPart") then
             repeat
+                pcall(function()
+                    character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
+                    game:GetService("VirtualUser"):Button1Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+                end)
                 wait(0.1)
-                if not farming then break end
-                player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
-                game:GetService("VirtualUser"):ClickButton1(Vector2.new())
-            until npc.Humanoid.Health <= 0 or not farming
+            until not npc or npc.Humanoid.Health <= 0 or not isFarming
         end
     end
 end
-
--- Hotkey to toggle panel (PC)
-local UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.RightShift then
-        MainFrame.Visible = not MainFrame.Visible
-    end
-end)
